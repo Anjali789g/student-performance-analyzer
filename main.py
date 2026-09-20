@@ -1,29 +1,44 @@
+import json
+
 def add_student(students):
+    print("\n--- Add Student ---")
 
-    print()
-    print("========== ADD STUDENT ==========")
+    name = input("Enter student name: ")
 
-    name = input("Name: ")
-    study_hours = float(input("Study hours per day: "))
-    attendance = float(input("Attendance percentage: "))
-    marks = float(input("Previous marks: "))
-    assignment = float(input("Assignment score: "))
-    sleep_hours = float(input("Sleep hours per day: "))
+    try:
+        study_hours = float(input("Enter study hours: "))
+        attendance = float(input("Enter attendance percentage: "))
+        marks = float(input("Enter marks percentage: "))
+        assignment = float(input("Enter assignment percentage: "))
+        sleep_hours = float(input("Enter sleep hours: "))
 
-    student = {
-        "name": name,
-        "study_hours": study_hours,
-        "attendance": attendance,
-        "marks": marks,
-        "assignment": assignment,
-        "sleep_hours": sleep_hours
-    }
+        if not 0 <= attendance <= 100:
+            print("Attendance must be between 0 and 100.")
+            return
 
-    students.append(student)
+        if not 0 <= marks <= 100:
+            print("Marks must be between 0 and 100.")
+            return
 
-    print()
-    print("Student added successfully! ✅")
+        if not 0 <= assignment <= 100:
+            print("Assignment marks must be between 0 and 100.")
+            return
 
+        student = {
+            "name": name,
+            "study_hours": study_hours,
+            "attendance": attendance,
+            "marks": marks,
+            "assignment": assignment,
+            "sleep_hours": sleep_hours
+        }
+
+        students.append(student)
+
+        print("\nStudent added successfully!")
+
+    except ValueError:
+        print("\nPlease enter numbers only for study hours, attendance, marks, assignment and sleep hours.")
 
 def calculate_performance(marks, attendance, assignment, study_hours, sleep_hours):
 
@@ -116,6 +131,75 @@ def view_students(students):
         print("Marks:", student["marks"])
         print("Attendance:", student["attendance"])
 
+def save_students(students):
+
+    with open("students.json", "w") as file:
+        json.dump(students, file, indent=4)
+
+    print("Student data saved successfully! 💾")
+
+
+def load_students():
+
+    try:
+        with open("students.json", "r") as file:
+            students = json.load(file)
+
+        return students
+
+    except FileNotFoundError:
+        return []
+
+
+def analyze_student(students):
+
+    print()
+    print("========== ANALYZE STUDENT ==========")
+
+    if len(students) == 0:
+        print("No students added yet.")
+        return
+
+    for i, student in enumerate(students, start=1):
+        print(f"{i}. {student['name']}")
+
+    print()
+    choice = input("Enter the student number: ")
+
+    try:
+        index = int(choice) - 1
+        student = students[index]
+    except (ValueError, IndexError):
+        print("Invalid student number.")
+        return
+
+    score = calculate_performance(
+        student["marks"],
+        student["attendance"],
+        student["assignment"],
+        student["study_hours"],
+        student["sleep_hours"]
+    )
+
+    print()
+    print("Name:", student["name"])
+    print("Study hours:", student["study_hours"])
+    print("Attendance:", student["attendance"])
+    print("Marks:", student["marks"])
+    print("Assignment:", student["assignment"])
+    print("Sleep hours:", student["sleep_hours"])
+    print("Performance Score:", round(score, 2))
+    print("Status:", get_status(score))
+
+    give_suggestions(
+        student["study_hours"],
+        student["attendance"],
+        student["marks"],
+        student["assignment"],
+        student["sleep_hours"]
+    )
+
+
 def show_top_student(students):
 
     print()
@@ -149,7 +233,7 @@ def show_top_student(students):
     
 # MAIN PROGRAM
 
-students = []
+students = load_students()
 
 while True:
 
@@ -159,6 +243,8 @@ while True:
 
     if choice == "1":
         add_student(students)
+        save_students(students)
+    
 
     elif choice == "2":
         view_students(students)

@@ -1,0 +1,18 @@
+[
+    {
+        "name": "j",
+        "study_hours": 8.0,
+        "attendance": 90.0,
+        "marks": 47.0,
+        "assignment": 74.0,
+        "sleep_hours": 4.0
+    },
+    {
+        "name": "3",
+        "study_hours": 4.0,
+        "attendance": 45.0,
+        "marks": 34.0,
+        "assignment": 34.0,
+        "sleep_hours": 3.0
+    }
+]
